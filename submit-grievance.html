@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Grievance | HOPE-GOV GRM</title>
+
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;min-height:100vh;display:flex;flex-direction:column}
+header,footer{background:#006400;color:#fff;text-align:center;padding:15px}
+nav{background:#008000;display:flex;justify-content:center;flex-wrap:wrap}
+nav a{color:#fff;text-decoration:none;padding:10px 20px;margin:5px;background:#006400;border-radius:5px}
+nav a:hover{background:#004d00}
+main{flex:1;max-width:900px;margin:30px auto;padding:0 15px}
+form{background:#fff;padding:25px;border-radius:8px;border:1px solid #ccc}
+label{font-weight:bold}
+input,select,textarea{width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc}
+textarea{min-height:120px}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+button{width:100%;margin-top:15px;padding:14px;background:#006400;color:#fff;border:none;font-size:16px;font-weight:bold;border-radius:6px;cursor:pointer}
+button:hover{background:#004d00}
+#response{margin-top:20px}
+.success{background:#e8f5e9;padding:15px;border-left:5px solid #006400}
+.error{background:#ffebee;padding:15px;border-left:5px solid #c62828}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="assets/images/hopegov_logo .png" height="60"><br>
+<h1>HOPE-GOV GRM Public Portal</h1>
+</header>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="submit-grievance.html">Submit Grievance</a>
+<a href="track-grievance.html">Track Grievance</a>
+<a href="http://127.0.0.1:8000/public-dashboard/">Dashboard</a>
+</nav>
+
+<main>
+<h2 style="text-align:center;color:#006400">Submit a Grievance</h2>
+<!-- ... (rest of the HTML remains the same) -->
+
+<form id="grievanceForm" action="http://127.0.0.1:8000/api/grievances/create/" method="POST">
+    <!-- ... (form fields remain the same) -->
+    <div class="form-row">
+  <div>
+    <label>Full Name</label>
+    <input name="full_name" required>
+  </div>
+  <div>
+    <label>Email</label>
+    <input type="email" name="email">
+  </div>
+  <div>
+    <label>Phone</label>
+    <input name="phone" required>
+  </div>
+</div>
+
+<div class="form-row">
+  <div>
+    <label>State</label>
+    <input name="state" required>
+  </div>
+  <div>
+    <label>LGA</label>
+    <input name="lga">
+  </div>
+</div>
+
+<label>Category</label>
+<select name="category" required>
+<option value="">Select Category</option>
+<option>Community Health & Safety</option>
+<option>GBV / SEA / SH</option>
+<option>Labour</option>
+<option>Social</option>
+<option>Environmental</option>
+</select>
+
+<label>Description</label>
+<textarea name="description" required></textarea>
+
+ <div class="form-group">
+        <label>Attach Evidence (Optional)</label>
+        <input type="file">
+      </div>
+
+
+<button type="submit">Submit Grievance</button>
+
+    
+</form>
+
+<div id="response"></div>
+
+</main>
+
+<footer>&copy; 2026 HOPE-GOVERNANCE</footer>
+
+
+</body>
+</html>

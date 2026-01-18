@@ -1,0 +1,80 @@
+{% extends "admin/base_site.html" %} {% load static %} {% block content %}
+<h1>GRM Dashboard</h1>
+
+<div style="margin-bottom: 20px">
+  <strong>Total Grievances:</strong> {{ total_grievances }}
+</div>
+
+<!-- Download CSV button -->
+<div style="margin-bottom: 20px">
+  <a
+    href="{% url 'admin:export_grievances_csv' %}"
+    class="button"
+    style="
+      padding: 10px 15px;
+      background-color: #4caf50;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    "
+  >
+    Download Grievances Report (CSV)
+  </a>
+</div>
+
+<!-- Status Pie Chart -->
+<canvas id="statusChart" width="400" height="200"></canvas>
+
+<h2>Recent Grievances</h2>
+<ul>
+  {% for grievance in recent_grievances %}
+  <li>
+    {{ grievance.ticket_number }} - {{ grievance.complainant_name }} ({{
+    grievance.status }})
+  </li>
+  {% empty %}
+  <li>No grievances yet.</li>
+  {% endfor %}
+</ul>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('statusChart').getContext('2d');
+  const statusChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          labels: ['New', 'In Progress', 'Resolved', 'Closed'],
+          datasets: [{
+              label: 'Grievance Status',
+              data: [
+                  {{ status_counts.NEW }},
+                  {{ status_counts.IN_PROGRESS }},
+                  {{ status_counts.RESOLVED }},
+                  {{ status_counts.CLOSED }}
+              ],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.6)',
+                  'rgba(255, 206, 86, 0.6)',
+                  'rgba(75, 192, 192, 0.6)',
+                  'rgba(153, 102, 255, 0.6)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: { position: 'bottom' },
+              title: { display: true, text: 'Grievance Status Distribution' }
+          }
+      }
+  });
+</script>
+{% endblock %}

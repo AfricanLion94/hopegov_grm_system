@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HOPE-GOVERNANCE GRM Public Dashboard</title>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@1.2.0"></script>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:#f4f4f4; color:#000; }
+    .layout { display:grid; grid-template-columns:260px 1fr; min-height:100vh; }
+    @media(max-width:900px){ .layout{grid-template-columns:1fr} .slicers{border-right:none;border-bottom:1px solid #ccc} }
+    .slicers { background:#fff; padding:15px; border-right:1px solid #ccc; }
+    .slicer-title { font-weight:bold; margin-bottom:10px; }
+    .slicers label { display:block; margin-top:10px; font-size:13px; }
+    .slicers select, .slicers button { width:100%; padding:7px; margin-top:4px; }
+    .main { padding:15px; }
+    .kpis { display:flex; gap:15px; flex-wrap:wrap; margin-bottom:15px; }
+    .kpi { flex:1; min-width:140px; padding:15px; text-align:center; border-radius:8px; color:#fff; font-weight:bold; }
+    .total{background:#4CAF50} .new{background:#2196F3} .inprogress{background:#FF9800} .resolved{background:#9C27B0} .closed{background:#F44336}
+    .charts { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:15px; }
+    .box { background:#fff; border:1px solid #ccc; border-radius:8px; padding:10px; position:relative; }
+    .chart-title { font-weight:bold; text-align:center; margin-bottom:5px; }
+    .heatmap-summary { display:grid; grid-template-columns:2fr 1fr; gap:15px; margin-top:15px; }
+    @media(max-width:900px){.heatmap-summary{grid-template-columns:1fr}}
+    .summary table { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:10px; }
+    .summary th, .summary td { border:1px solid #ccc; padding:6px; text-align:center; }
+    .summary th { background:#1976D2; color:#fff; }
+    .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; font-size:12px; }
+    .legend span { display:flex; align-items:center; gap:5px; }
+    .color-box { width:12px; height:12px; }
+    nav{background:#008000;display:flex;justify-content:center;flex-wrap:wrap}
+nav a{color:#fff;text-decoration:none;padding:10px 20px;margin:5px;background:#006400;border-radius:5px}
+nav a:hover{background:#004d00}
+
+  </style>
+</head>
+<nav>
+      <a href="https://grm.hbiagroexport.com/index.html">🏠 Home</a>
+      <a href="https://grm.hbiagroexport.com/submit-grievance.html"
+        >📝 Submit Grievance</a
+      >
+      <a href="https://grm.hbiagroexport.com/track-grievance.html"
+        >🔍 Track Grievance</a
+      >
+      
+    </nav>
+
+
+<body>
+<div class="layout">
+<!-- SLICERS -->
+<form method="get" id="filterForm" class="slicers">
+  <div class="slicer-title">Filters</div>
+  <label>State</label>
+  <select name="state">
+    <option value="">All States</option>
+    {% for s in states_for_dropdown %}
+      <option value="{{ s }}" {% if selected.state == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <label>Category</label>
+  <select name="category">
+    <option value="">All Categories</option>
+    {% for c in all_categories %}
+      <option value="{{ c }}" {% if selected.category == c %}selected{% endif %}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <label>Status</label>
+  <select name="status">
+    <option value="">All Status</option>
+    {% for s in all_statuses %}
+      <option value="{{ s }}" {% if selected.status == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <label>Month</label>
+  <select name="month">
+    <option value="">All Months</option>
+    {% for m in months %}
+      <option value="{{ m.num }}" {% if selected.month == m.num|stringformat:"s" %}selected{% endif %}>{{ m.name }}</option>
+    {% endfor %}
+  </select>
+  <label>Year</label>
+  <select name="year">
+    <option value="">All Years</option>
+    {% for y in years %}
+      <option value="{{ y }}" {% if selected.year == y|stringformat:"s" %}selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Apply Filters</button>
+  <button type="button" onclick="resetFilters()">Reset</button>
+  <!-- No export buttons for public dashboard -->
+</form>
+
+<!-- MAIN -->
+<div class="main">
+  <h2 style="text-align:center;">HOPE-GOVERNANCE GRM Public Dashboard</h2>
+  <button onclick="toggleDark()" style="display:block; margin:10px auto;">🌙 Dark Mode</button>
+  <br>
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi total">Total Tickets<br>{{ kpis.Total }}</div>
+    <div class="kpi new">New Tickets<br>{{ kpis.New }}</div>
+    <div class="kpi inprogress">Tickets In Progress<br>{{ kpis.InProgress }}</div>
+    <div class="kpi resolved">Resolved Tickets<br>{{ kpis.Resolved }}</div>
+    <div class="kpi closed">Closed Tickets<br>{{ kpis.Closed }}</div>
+  </div>
+  <p><b>Insight:</b> {{ insight }}</p>
+  <!-- Charts -->
+  <div class="charts">
+    <div class="box">
+      <div class="chart-title">Tickets by Category</div>
+      <canvas id="pie"></canvas>
+    </div>
+    <div class="box">
+      <div class="chart-title">Status Distribution</div>
+      <canvas id="doughnut"></canvas>
+    </div>
+    <div class="box">
+      <div class="chart-title">Tickets per State</div>
+      <canvas id="bar"></canvas>
+    </div>
+    <div class="box">
+      <div class="chart-title">Daily Trend</div>
+      <canvas id="line"></canvas>
+    </div>
+    <div class="box">
+      <div class="chart-title">State × Category Heatmap</div>
+      <canvas id="heatmap"></canvas>
+      <div class="legend" id="heatmapLegend"></div>
+    </div>
+  </div>
+  <!-- Heatmap + tables -->
+  <div class="heatmap-summary">
+    <div class="summary box">
+      <div class="chart-title">Summary Tables</div>
+      <table>
+        <tr><th>Category</th><th>Count</th></tr>
+        {% for r in table_category %}<tr><td>{{ r.category }}</td><td>{{ r.count }}</td></tr>{% endfor %}
+      </table>
+      <table>
+        <tr><th>State</th><th>Count</th></tr>
+        {% for r in table_state %}<tr><td>{{ r.state }}</td><td>{{ r.count }}</td></tr>{% endfor %}
+      </table>
+      <table>
+        <tr><th>Status</th><th>Count</th></tr>
+        {% for r in table_status %}<tr><td>{{ r.status }}</td><td>{{ r.count }}</td></tr>{% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// Same chart scripts as dashboard.html, but remove export functions
+function toggleDark(){document.body.classList.toggle("dark")}
+function resetFilters(){window.location.href=window.location.pathname}
+
+// Charts (same as before)
+const pieChart = new Chart(document.getElementById("pie"), {
+  type:"pie",
+  data:{ labels: {{ category_labels|safe }}, datasets:[{ data: {{ category_counts|safe }} }] },
+  options:{responsive:true, animation:false}
+});
+
+const doughnutChart = new Chart(document.getElementById("doughnut"), {
+  type:"doughnut",
+  data:{ labels: {{ status_labels|safe }}, datasets:[{ data: {{ status_counts|safe }} }] },
+  options:{responsive:true, animation:false}
+});
+
+const barChart = new Chart(document.getElementById("bar"), {
+  type:"bar",
+  data:{ labels: {{ all_states|safe }}, datasets:[{ label:"Tickets", data: {{ state_counts|safe }}, backgroundColor: {{ all_states|safe }}.map((s,i)=>`hsl(${i*25},70%,60%)`) }] },
+  options:{responsive:true, animation:false, scales:{y:{beginAtZero:true}}}
+});
+
+const ts = {{ time_series|safe }};
+const lineChart = new Chart(document.getElementById("line"), {
+  type:"line",
+  data:{ labels: ts.dates, datasets:[{ label:"Daily Tickets", data: ts.counts, borderColor:"#ff6384", fill:false }] },
+  options:{responsive:true, animation:false}
+});
+
+const hm = {{ heatmap|safe }};
+const heatmapChart = new Chart(document.getElementById("heatmap"), {
+  type:"matrix",
+  data:{ datasets:[{
+    data: hm.values.flatMap((r,i)=>r.map((v,j)=>({x:j,y:i,v,v:v}))),
+    backgroundColor: c=>`hsl(${hm.states.indexOf(c.raw.state)*25},70%,60%)`,
+    width:()=>22, height:()=>22
+  }]},
+  options:{
+    animation:false,
+    responsive:true,
+    plugins:{ tooltip:{ callbacks:{ label:c=>`${c.raw.state} – ${hm.categories[c.raw.x]}: ${c.raw.v}` } } },
+    scales:{ x:{ labels: hm.categories }, y:{ labels: hm.states } }
+  }
+});
+
+const lg = document.getElementById("heatmapLegend");
+hm.states.forEach(s=>lg.innerHTML+=`<span><div class="color-box" style="background:hsl(${hm.states.indexOf(s)*25},70%,60%)"></div>${s}</span>`);
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HOPE-GOV GRM Public Portal</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ===== PAGE LAYOUT ===== */
+    body { margin:0; font-family: Arial, sans-serif; background: #ffffff; color: #000; display: flex; flex-direction: column; min-height: 100vh; }
+    header { background: #008751; color: #fff; padding: 15px 0; text-align: center; position: relative; }
+    header img { height: 60px; vertical-align: middle; margin-right: 15px; }
+    header h1 { display: inline-block; font-size: 24px; vertical-align: middle; margin:0; }
+
+    nav { display: flex; justify-content: center; background: #ffffff; padding: 10px 0; flex-wrap: wrap; border-bottom: 3px solid #008751; }
+    nav a { color: #008751; text-decoration: none; padding: 10px 20px; margin: 5px; border-radius: 5px; background: #e6f2e6; font-weight: bold; transition: background 0.3s, color 0.3s; }
+    nav a:hover { background: #008751; color: #fff; }
+
+    main { max-width: 900px; margin: 20px auto; padding: 0 15px; text-align: center; flex: 1; }
+
+    main h2 { margin-bottom: 15px; color: #008751; }
+    main p { margin-bottom: 20px; }
+
+    .button-group { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+    .button-group a { display: inline-block; background: #008751; color: #fff; padding: 15px 25px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: background 0.3s; }
+    .button-group a:hover { background: #006233; }
+
+    footer { text-align: center; padding: 15px 0; background: #008751; color: #fff; margin-top: auto; }
+
+    @media(max-width:600px){ .button-group a{width:100%;} }
+
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <img src="assets/images/hopegov_logo .png" alt="">
+    <br>
+    <h1>HOPE-GOV GRM Public Portal</h1>
+  </header>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="https://grm.hbiagroexport.com/index.html">Home</a>
+    <a href="https://grm.hbiagroexport.com/submit-grievance.html">Submit Grievance</a>
+    <a href="https://grm.hbiagroexport.com/track-grievance.html">Track Grievance</a>
+    <a href="https://grm.hbiagroexport.com/public-dashboard/">Dashboard</a>
+    <a href="https://grm.hbiagroexport.com/admin/">Admin Login</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <h2>Welcome to the HOPE-GOV Grievance Redressal System</h2>
+    <p>
+      This portal allows citizens to submit complaints, track their status, and view key insights from the dashboard.
+    </p>
+
+    <div class="button-group">
+      <a href="https://grm.hbiagroexport.com/submit-grievance.html">Submit Grievance</a>
+      <a href="https://grm.hbiagroexport.com/track-grievance.html">Track Grievance</a>
+      <a href="https://grm.hbiagroexport.com/dashboard.html">View Dashboard</a>
+    </div>
+
+    <p>All submissions are confidential and tracked by a unique ticket number.</p>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+   &copy; 2026 HOPE-GOVERNANCE. All rights reserved.
+  </footer>
+
+</body>
+</html>

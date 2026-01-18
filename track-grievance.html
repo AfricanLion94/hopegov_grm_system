@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Track Grievance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f4f4f4;min-height:100vh;display:flex;flex-direction:column}
+header,footer{background:#006400;color:#fff;text-align:center;padding:15px}
+nav{background:#008000;display:flex;justify-content:center;flex-wrap:wrap}
+nav a{color:#fff;text-decoration:none;padding:10px 20px;margin:5px;background:#006400;border-radius:5px}
+nav a:hover{background:#004d00}
+main{flex:1;max-width:900px;margin:30px auto;padding:0 15px}
+form{background:#fff;padding:25px;border-radius:8px;border:1px solid #ccc}
+label{font-weight:bold}
+input,select,textarea{width:100%;padding:10px;margin-top:5px;border-radius:5px;border:1px solid #ccc}
+textarea{min-height:120px}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+button{width:100%;margin-top:15px;padding:14px;background:#006400;color:#fff;border:none;font-size:16px;font-weight:bold;border-radius:6px;cursor:pointer}
+button:hover{background:#004d00}
+#response{margin-top:20px}
+.success{background:#e8f5e9;padding:15px;border-left:5px solid #006400}
+.error{background:#ffebee;padding:15px;border-left:5px solid #c62828}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="assets/images/hopegov_logo.png" height="60"><br>
+<h1>HOPE-GOV GRM</h1>
+</header>
+
+<nav>
+<a href="https://grm.hbiagroexport.com/index.html">Home</a>
+<a href="https://grm.hbiagroexport.com/submit-grievance.html">Submit</a>
+<a href="https://grm.hbiagroexport.com/track-grievance.html">Track</a>
+<a href="https://grm.hbiagroexport.com//public-dashboard/">Dashboard</a>
+</nav>
+
+<main>
+<h2>Track Your Grievance</h2>
+
+<input id="ticket" placeholder="GRM-2026-000123">
+<button onclick="track()">Track</button>
+
+<div id="result"></div>
+</main>
+
+<footer>&copy; 2026 HOPE-GOVERNANCE</footer>
+
+<script>
+async function track(){
+const ticket=document.getElementById("ticket").value;
+const box=document.getElementById("result");
+box.innerHTML="Checking...";
+
+try{
+const res=await fetch(`https://grm.hbiagroexport.com/api/grievances/track/${ticket}/`);
+const data=await res.json();
+if(res.ok){
+box.innerHTML=`
+<p><b>Status:</b> ${data.status}</p>
+<p><b>Category:</b> ${data.category}</p>
+<p><b>Last Updated:</b> ${data.updated_at}</p>`;
+}else{
+box.innerHTML="Ticket not found";
+}
+}catch{
+box.innerHTML="Server error";
+}
+}
+</script>
+
+</body>
+</html>
